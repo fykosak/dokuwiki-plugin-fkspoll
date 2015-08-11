@@ -1,0 +1,36 @@
+CREATE TABLE poll_question(
+'question_id' INTEGER PRIMARY KEY AUTOINCREMENT,	 
+'question' TEXT,	 
+'type' INTEGER,
+'valid_from' DATETIME,	 
+'valid_to' DATETIME
+);
+
+
+CREATE TABLE poll_answers(
+'answers_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+'question_id' INTEGER,
+'answers' TEXT,
+FOREIGN KEY(question_id) REFERENCES poll_question(question_id)
+);
+
+CREATE TABLE poll_response(
+'response_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+'question_id' INTEGER,	 
+'answer_id' INTEGER,	 
+'users_id' INTEGER,	 
+'remote_addr' TEXT,	 
+'remote_host' TEXT,	 
+'user_agent' TEXT,	 
+'accept' TEXT,	 
+'accept_language' TEXT,	 
+'referer' TEXT,	 
+'from' TEXT,	 
+'cookie' TEXT,	 
+'inserted' DATETIME,	
+FOREIGN KEY(answer_id) REFERENCES poll_answers(answer_id),
+FOREIGN KEY(question_id) REFERENCES poll_question(question_id)
+);
+
+ 
+ 
