@@ -8,8 +8,9 @@
 jQuery(function(){
     var $ = jQuery;
     $("#add_poll_answer").click(function(){
-        var html=$(this).parent('.no').find('fieldset').find('label').html();
+        console.log($(this).parent('fieldset').find('label'));
+        var html=$(this).parent('fieldset').find('label').html();
         
-        $(this).parent('.no').find('fieldset').append('<br/><label>'+html+'</label>');
+        $(this).parent('fieldset').append('<label class="block">'+html+'</label><br />');
     });
 });

@@ -2,8 +2,11 @@ CREATE TABLE poll_question(
 'question_id' INTEGER PRIMARY KEY AUTOINCREMENT,	 
 'question' TEXT,	 
 'type' INTEGER,
-'valid_from' DATETIME,	 
-'valid_to' DATETIME
+'valid_from' TEXT,	 
+'valid_to' TEXT,
+'new_answer' BOOLEAN,
+'lang' TEXT,
+'sectok' TEXT
 );
 
 

@@ -1,10 +1,11 @@
 <?php
 
+
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author     Michal Červeňák <miso@fykos.cz>
+ * @author Jan Prachař
+ * @author Michal Červeňák <miso@fykos.cz>
  */
-// must be run within Dokuwiki
 
 if(!defined('DOKU_INC')){
     die();
@@ -40,28 +41,30 @@ class syntax_plugin_fkspoll_poll extends DokuWiki_Syntax_Plugin {
     }
 
     public function connectTo($mode) {
-        $this->Lexer->addSpecialPattern('~~FKSPOLL~~',$mode,'plugin_fkspoll_poll');
+        $this->Lexer->addSpecialPattern('~~FKSPOLL-?[a-z]*?~~',$mode,'plugin_fkspoll_poll');
     }
 
     /**
      * Handle the match
      */
     public function handle($match,$state) {
-        
-
-        
-
-
-        return array($state,array());
+        global $conf;
+        $matches=array();
+        if(preg_match('/~~FKSPOLL-([a-z]*?)~~/',$match,$matches)){
+            list(,$lang)=$matches;
+        }else{           
+            $lang=$conf['lang'];
+        }
+        return array($state,array('lang'=>$lang));
     }
 
     public function render($mode,Doku_Renderer &$renderer,$data) {
-        //list(,$m) = $data;
-       // list($poll) = $m;
+        list(,$param) = $data;
+        
         if($mode == 'xhtml'){
-           
+            
             $renderer->nocache();
-            $poll = $this->helper->getCurrentPoll();
+            $poll = $this->helper->getCurrentPoll($param['lang']);
             $renderer->doc.= $this->helper->getHtml($poll);
         }
 

@@ -1,10 +1,9 @@
 <?php
 
 /**
- * DokuWiki Plugin fksnewsfeed (Action Component)
- *
- * @license GPL 2 http://www.gnu.org/licenses/gpl-2.0.html
- * @author  Michal Červeňák <miso@fykos.cz>
+ * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ * @author Jan Prachař
+ * @author Michal Červeňák <miso@fykos.cz>
  */
 if(!defined('DOKU_INC')){
     die();
@@ -41,27 +40,24 @@ class action_plugin_fkspoll extends DokuWiki_Action_Plugin {
      * @global type $ID
      * @param Doku_Event $event
      * @param type $param
-     * @return type
+     * @return void
      */
     public function Response(Doku_Event &$event) {
-      
-        
-       
         global $INPUT;
         if($INPUT->str('target') !== 'fkspoll'){
             return;
         }
-        $answers = $INPUT->param('answer');
         $question_id = (int) $INPUT->str('question_id');
-
         if(!$this->helper->HasVoted($question_id)){
+            $answers = $INPUT->param('answer');
+            if($INPUT->int('type') == 1 && $answers['id'][0] != 0){
+                unset($answers['text']);
+            }
             if(isset($answers['id'])){
                 foreach ($answers['id'] as $id) {
                     $this->helper->SaveResponse($question_id,$id);
                 }
             }
-
-
             if(isset($answers['text'])){
                 foreach ($answers['text'] as $text) {
                     $text = trim($text);
@@ -72,12 +68,10 @@ class action_plugin_fkspoll extends DokuWiki_Action_Plugin {
                     $this->helper->SaveResponse($question_id,$id);
                 }
             }
-
-
             setcookie('fkspoll-'.$question_id,1,time() + 60 * 60 * 24 * 100);
             $_COOKIE['fkspoll-'.$question_id] = 1;
         }else{
-            msg('Alredy voted!!!',-1);
+            msg('Already voted!!!',-1);
             return;
         }
     }
