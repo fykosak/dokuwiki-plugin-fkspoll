@@ -57,7 +57,7 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
             $p['valid_to'] = $INPUT->str('valid_to');
             $p['valid_from'] = $INPUT->str('valid_from');
         }else{
-            msq('no date type selected',-1);
+            msg('no date type selected',-1);
             return;
         }
         $p['new_answer'] = $INPUT->int('new_answer') ? 1 : 0;
@@ -80,7 +80,7 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
                 $INPUT->remove('question');
                 msg('poll question has been created',1);
             }else{
-                msq('niečo sa dodrbalo',-1);
+                msg('niečo sa dodrbalo',-1);
             }
         }else{
             msg('alredy added',0);
