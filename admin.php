@@ -36,17 +36,25 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
         return $menutext;
     }
 
-    public function handle() {
+    public function handle() {      
+        
 
         global $INPUT;
+        
         if($INPUT->str('fks_poll') !== 'create_poll'){
             return;
         }
-        $question = $INPUT->str('question');
+        if($INPUT->str('msg')=='ok'){
+             msg('poll question has been created',1);
+             return;
+        }
+        
+        $question = trim($INPUT->str('question'));
         if($question == ""){
-            msg('empty question',-1);
+            msg($this->getLang('empty_question'),-1);
             return;
         }
+        
 
 
         if($INPUT->str('time_type') == 'week'){
@@ -66,6 +74,7 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
         /* only one save!!! */
         $sectok = md5($question.serialize($p));
         $p['sectok'] = $sectok;
+        
         if($this->helper->IsNewQuestion($sectok)){
             $id = $this->helper->CreateNewquestion($question,$p);
             if($id != 0){
@@ -78,7 +87,11 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
                     $this->helper->CreateAnswer($id,$text);
                 }
                 $INPUT->remove('question');
-                msg('poll question has been created',1);
+                
+               
+                
+                header('Location: '.$_SERVER['REQUEST_URI'].'&fks_poll=create_poll&msg=ok');
+                exit;
             }else{
                 msg('niečo sa dodrbalo',-1);
             }
@@ -99,20 +112,20 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
         $form->endFieldset();
 
 
-        $form->startFieldset('Zvolte týždeň, alebo datum začiatku a konca');
-        $form->addElement(form_makeRadioField('time_type','week','Week',null,null,array('required' => 'required')));
-        $form->addElement(form2_makeWeekField('valid_week',null,$this->getLang('valid_from_date'),null,'block'));
+        $form->startFieldset($this->getLang('choose_date-week').'Zvolte týždeň, alebo datum začiatku a konca');
+        $form->addElement(form_makeRadioField('time_type','week',$this->getLang('choose_week').'Week',null,null,array('required' => 'required')));
+        $form->addElement(form2_makeWeekField('valid_week',null,$this->getLang('valid_week'),null,'block'));
         $form->addElement('<hr />');
-        $form->addElement(form_makeRadioField('time_type','date','Date',null,null,array('required' => 'required')));
-        $form->addElement(form2_makeDateTimeField('valid_from',date('Y-m-d',time()).'T00:00:00',$this->getLang('valid_from_date'),null,'block'));
-        $form->addElement(form2_makeDateTimeField('valid_to',date('Y-m-d',time() + (7 * 24 * 60 * 60)).'T23:59:59',$this->getLang('valid_from_date'),null,'block'));
+        $form->addElement(form_makeRadioField('time_type','date',$this->getLang('choose_date').'Date',null,null,array('required' => 'required')));
+        $form->addElement(form2_makeDateTimeField('valid_from',date('Y-m-d',time()).'T00:00:00',$this->getLang('valid_from'),null,'block'));
+        $form->addElement(form2_makeDateTimeField('valid_to',date('Y-m-d',time() + (7 * 24 * 60 * 60)).'T23:59:59',$this->getLang('valid_to'),null,'block'));
         $form->endFieldset();
 
-        $form->startFieldset('Parametre ankety');
-        $form->addElement(form_makeRadioField('type','single','single',null,null,array('required' => 'required')));
-        $form->addElement(form_makeRadioField('type','multiple','multiple',null,null,array('required' => 'required')));
+        $form->startFieldset($this->getLang('poll_param').'Parametre ankety');
+        $form->addElement(form_makeRadioField('type','single',$this->getLang('single').'single',null,null,array('required' => 'required')));
+        $form->addElement(form_makeRadioField('type','multiple',$this->getLang('multiple').'multiple',null,null,array('required' => 'required')));
         $form->addElement('<br/>');
-        $form->addElement(form_makeCheckboxField('new_answer',1,'answers_create'));
+        $form->addElement(form_makeCheckboxField('new_answer',1,$this->getLang('new_answer').'new_answer'));
         $form->addElement('<br/>');
         $form->addElement(form_makeListboxField('lang',array('cs','en'),'',$lang['i_chooselang']));
         $form->endFieldset();

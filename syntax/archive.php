@@ -64,7 +64,7 @@ class syntax_plugin_fkspoll_archive extends DokuWiki_Syntax_Plugin {
             $polls = $this->helper->AllPolls($param['lang']);
             $renderer->doc.= '<h1>všetky ankety</h1>';
             foreach (array_reverse($polls) as $poll) {
-                $renderer->doc.= $this->helper->getClosedPollHtml($poll,true);
+                $renderer->doc.= $this->helper->GetClosedPollHtml($poll,true);
             }
         }
 

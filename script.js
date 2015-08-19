@@ -8,7 +8,7 @@
 jQuery(function(){
     var $ = jQuery;
     $("#add_poll_answer").click(function(){
-        console.log($(this).parent('fieldset').find('label'));
+        
         var html=$(this).parent('fieldset').find('label').html();
         
         $(this).parent('fieldset').append('<label class="block">'+html+'</label><br />');
