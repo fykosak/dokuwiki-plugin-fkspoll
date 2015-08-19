@@ -296,7 +296,8 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
     public function IsNewQuestion($sectok) {
         $sql = 'SELECT * FROM '.self::db_table_question.' WHERE sectok=? ';
         $res = $this->sqlite->query($sql,$sectok);
-        return empty($this->sqlite->res2arr($res)) ? 1 : 0;
+        $ar= $this->sqlite->res2arr($res);
+        return (empty($ar) ? 1 : 0);
     }
 
 }
