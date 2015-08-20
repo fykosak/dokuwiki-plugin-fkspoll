@@ -23,3 +23,4 @@ $lang['multiple']="";
 $lang['new_answer']="";
 $lang['poll_param']="";
 $lang['empty_question']="";
+$lang['create_poll']="";

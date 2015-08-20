@@ -185,6 +185,7 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
         $title = $d1.' - '.$d2;
         $r = '
         <div class="FKS_poll closed">';
+        $r.='<div class="poll">';
         $r .= '
             <h3>'.$poll['question'].'</h3>';
         $r .= '
@@ -199,6 +200,7 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
             $r .= '</div>';
             $r .= '</div>';
         }
+        $r .= '</div>';
         $r .= '</div>';
         return $r;
     }
@@ -215,6 +217,7 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
         }
         $r.='
         <div class="FKS_poll open">';
+        $r.='<div class="poll">';
         $r .= '
             <h3>'.$poll['question'].'</h3>';
         $form = new Doku_Form(array('method' => 'POST'));
@@ -256,6 +259,7 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
         $r.=ob_get_contents();
         ob_end_clean();
         $r.='</div>';
+        $r .= '</div>';
         return $r;
     }
 
@@ -296,7 +300,7 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
     public function IsNewQuestion($sectok) {
         $sql = 'SELECT * FROM '.self::db_table_question.' WHERE sectok=? ';
         $res = $this->sqlite->query($sql,$sectok);
-        $ar= $this->sqlite->res2arr($res);
+        $ar = $this->sqlite->res2arr($res);
         return (empty($ar) ? 1 : 0);
     }
 

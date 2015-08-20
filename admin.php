@@ -36,32 +36,27 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
         return $menutext;
     }
 
-    public function handle() {      
-        
-
+    public function handle() {
         global $INPUT;
-        
+
         if($INPUT->str('fks_poll') !== 'create_poll'){
             return;
         }
-        if($INPUT->str('msg')=='ok'){
-             msg('poll question has been created',1);
-             return;
+        if($INPUT->str('msg') == 'ok'){
+            msg('poll question has been created',1);
+            return;
         }
-        
+
         $question = trim($INPUT->str('question'));
         if($question == ""){
             msg($this->getLang('empty_question'),-1);
             return;
         }
-        
-
-
         if($INPUT->str('time_type') == 'week'){
             $s = strtotime($INPUT->str('valid_week'));
             $p['valid_from'] = date('Y-m-d\TH:i:s',$s);
             $p['valid_to'] = date('Y-m-d\TH:i:s',$s + (7 * 24 * 60 * 60) - 1);
-        }elseif($INPUT->str('time_type') == 'week'){
+        }elseif($INPUT->str('time_type') == 'date'){
             $p['valid_to'] = $INPUT->str('valid_to');
             $p['valid_from'] = $INPUT->str('valid_from');
         }else{
@@ -74,27 +69,20 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
         /* only one save!!! */
         $sectok = md5($question.serialize($p));
         $p['sectok'] = $sectok;
-        
+
         if($this->helper->IsNewQuestion($sectok)){
             $id = $this->helper->CreateNewquestion($question,$p);
-            if($id != 0){
-                $answers = $INPUT->param('answers');
-                foreach ($answers as $answer) {
-                    $text = trim($answer);
-                    if($text == ""){
-                        continue;
-                    }
-                    $this->helper->CreateAnswer($id,$text);
+
+            $answers = $INPUT->param('answers');
+            foreach ($answers as $answer) {
+                $text = trim($answer);
+                if($text == ""){
+                    continue;
                 }
-                $INPUT->remove('question');
-                
-               
-                
-                header('Location: '.$_SERVER['REQUEST_URI'].'&fks_poll=create_poll&msg=ok');
-                exit;
-            }else{
-                msg('niečo sa dodrbalo',-1);
+                $this->helper->CreateAnswer($id,$text);
             }
+            header('Location: '.$_SERVER['REQUEST_URI'].'&fks_poll=create_poll&msg=ok');
+            exit;
         }else{
             msg('alredy added',0);
         }
@@ -103,12 +91,12 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
     public function html() {
 
         global $lang;
-        ptln('<h1>Create poll</h1>');
+        ptln('<h1>'.$this->getLang('create_poll').'Create poll</h1>');
 
         $form = new Doku_Form(array('method' => 'POST'));
         $form->addHidden('fks_poll','create_poll');
         $form->startFieldset($this->getLang('question'));
-        $form->addElement(form_makeTextField('question',""," ",null,'block',array('placeholder' => $this->getLang('question'),'required' => 'required')));
+        $form->addElement(form_makeTextField('question',"", $this->getLang('question'),null,'block',array('placeholder' => $this->getLang('question'),'required' => 'required')));
         $form->endFieldset();
 
 
@@ -133,7 +121,7 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
 
         $form->startFieldset($this->getLang('answers'));
         $form->addElement(form_makeButton('button',null,$this->getLang('add_answer'),array('id' => 'add_poll_answer')));
-        $form->addElement(form_makeTextField('answers[]',"",$this->getLang('answer'),null,'block'));
+        $form->addElement(form_makeTextField('answers[]',"",$this->getLang('answer'),null,'block',array('placeholder' => $this->getLang('answer'))));
         $form->endFieldset();
 
         $form->addElement(form_makeButton('submit',null,$lang['btn_save']));
