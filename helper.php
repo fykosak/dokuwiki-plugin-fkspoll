@@ -184,8 +184,8 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
         $d2 = date('d\.m\. Y H:i:s',strtotime($poll['valid_to']));
         $title = $d1.' - '.$d2;
         $r = '
-        <div class="FKS_poll closed">';
-        $r.='<div class="poll">';
+        <div class="FKS_poll">';
+        $r.='<div class="poll closed">';
         $r .= '
             <h3>'.$poll['question'].'</h3>';
         $r .= '
@@ -216,8 +216,8 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
             return;
         }
         $r.='
-        <div class="FKS_poll open">';
-        $r.='<div class="poll">';
+        <div class="FKS_poll">';
+        $r.='<div class="poll  open">';
         $r .= '
             <h3>'.$poll['question'].'</h3>';
         $form = new Doku_Form(array('method' => 'POST'));
