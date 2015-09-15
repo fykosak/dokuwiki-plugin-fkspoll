@@ -119,11 +119,11 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
             if($v == 1){
                 $l = $this->getLang('N-SG_vote');
             }elseif($v > 0 && $v < 5){
-                $l = $this->getLang('G-SG_vote');
-            }else{
                 $l = $this->getLang('N-PL_vote');
+            }else{
+                $l = $this->getLang('G-PL_vote');
             }
-            $r[$k]['absCountUnit'] = $l;
+            $r[$k]['unit'] = $l;
         }
 
         return $r;
@@ -180,23 +180,23 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
      */
     public function getClosedPollHtml($poll) {
         $poll['responses'] = $this->getResponses($poll);
-        $d1 = date('d\.m\. Y H:i:s',strtotime($poll['valid_from']));
-        $d2 = date('d\.m\. Y H:i:s',strtotime($poll['valid_to']));
-        $title = $d1.' - '.$d2;
+        $d1 = date('d\.m\. Y',strtotime($poll['valid_from']));
+        $d2 = date('d\.m\. Y',strtotime($poll['valid_to']));
+        $date = $d1.' - '.$d2;
         $r = '
         <div class="FKS_poll">';
         $r.='<div class="poll closed">';
         $r .= '
             <h3>'.$poll['question'].'</h3>';
         $r .= '
-            <label>'.$title.'</label>';
+            <span>'.$date.'</span>';
         foreach ($poll['responses'] as $response) {
             $r .= '<div class="answer">';
             $r .= '<div class="bar" style="width: '.$response['per'].'%">';
             $r .= '</div>';
             $r .= '<div class="name">';
             $r .= '<span class="text">'.htmlspecialchars($response['answer']).'</span>';
-            $r .= '<span class="count">'.$response['abs'].' ('.$response['per'].'%)'.'</span>';
+            $r .= '<span class="count">'.$response['abs'].' '.$response['unit'].' ('.$response['per'].'%)'.'</span>';
             $r .= '</div>';
             $r .= '</div>';
         }
@@ -233,7 +233,7 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
             }
             if($poll['new_answer'] == "1"){
                 $form->addElement('<div class="answer">');
-                $form->addElement(form_makeRadioField('answer[id][]',0,'iná odpoveď'));
+                $form->addElement(form_makeRadioField('answer[id][]',0,$this->getLang('another_answer')));
                 $form->addElement(form_makeTextField('answer[text][]',""," "));
                 $form->addElement('</div>');
             }

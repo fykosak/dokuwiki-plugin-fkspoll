@@ -91,29 +91,30 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
     public function html() {
 
         global $lang;
-        ptln('<h1>'.$this->getLang('create_poll').'Create poll</h1>');
+        helper_plugin_fkshelper::HTML5Test();
+        ptln('<h1>'.$this->getLang('create_poll').'</h1>');
 
         $form = new Doku_Form(array('method' => 'POST'));
         $form->addHidden('fks_poll','create_poll');
         $form->startFieldset($this->getLang('question'));
-        $form->addElement(form_makeTextField('question',"", $this->getLang('question'),null,'block',array('placeholder' => $this->getLang('question'),'required' => 'required')));
+        $form->addElement(form_makeTextField('question',"", $this->getLang('question'),null,'block',array('placeholder' => $this->getLang('question'),'required' => 'required','pattern'=>"\S.*")));
         $form->endFieldset();
 
 
-        $form->startFieldset($this->getLang('choose_date-week').'Zvolte týždeň, alebo datum začiatku a konca');
-        $form->addElement(form_makeRadioField('time_type','week',$this->getLang('choose_week').'Week',null,null,array('required' => 'required')));
+        $form->startFieldset($this->getLang('choose_date-week'));
+        $form->addElement(form_makeRadioField('time_type','week',$this->getLang('choose_week'),null,null,array('required' => 'required')));
         $form->addElement(form2_makeWeekField('valid_week',null,$this->getLang('valid_week'),null,'block'));
         $form->addElement('<hr />');
-        $form->addElement(form_makeRadioField('time_type','date',$this->getLang('choose_date').'Date',null,null,array('required' => 'required')));
+        $form->addElement(form_makeRadioField('time_type','date',$this->getLang('choose_date'),null,null,array('required' => 'required')));
         $form->addElement(form2_makeDateTimeField('valid_from',date('Y-m-d',time()).'T00:00:00',$this->getLang('valid_from'),null,'block'));
         $form->addElement(form2_makeDateTimeField('valid_to',date('Y-m-d',time() + (7 * 24 * 60 * 60)).'T23:59:59',$this->getLang('valid_to'),null,'block'));
         $form->endFieldset();
 
-        $form->startFieldset($this->getLang('poll_param').'Parametre ankety');
-        $form->addElement(form_makeRadioField('type','single',$this->getLang('single').'single',null,null,array('required' => 'required')));
-        $form->addElement(form_makeRadioField('type','multiple',$this->getLang('multiple').'multiple',null,null,array('required' => 'required')));
+        $form->startFieldset($this->getLang('poll_param'));
+        $form->addElement(form_makeRadioField('type','single',$this->getLang('single'),null,null,array('required' => 'required')));
+        $form->addElement(form_makeRadioField('type','multiple',$this->getLang('multiple'),null,null,array('required' => 'required')));
         $form->addElement('<br/>');
-        $form->addElement(form_makeCheckboxField('new_answer',1,$this->getLang('new_answer').'new_answer'));
+        $form->addElement(form_makeCheckboxField('new_answer',1,$this->getLang('new_answer')));
         $form->addElement('<br/>');
         $form->addElement(form_makeListboxField('lang',array('cs','en'),'',$lang['i_chooselang']));
         $form->endFieldset();

@@ -70,8 +70,10 @@ class action_plugin_fkspoll extends DokuWiki_Action_Plugin {
             }
             setcookie('fkspoll-'.$question_id,1,time() + 60 * 60 * 24 * 100);
             $_COOKIE['fkspoll-'.$question_id] = 1;
+            header('Location: '.$_SERVER['REQUEST_URI']);
+            exit();
         }else{
-            msg('Already voted!!!',-1);
+            msg($this->getLang('already_voted'),-1);
             return;
         }
     }
