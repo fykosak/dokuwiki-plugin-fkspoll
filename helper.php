@@ -187,7 +187,7 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
         <div class="FKS_poll">';
         $r.='<div class="poll closed">';
         $r .= '
-            <h3>'.$poll['question'].'</h3>';
+            <h3>'.htmlspecialchars($poll['question']).'</h3>';
         $r .= '
             <span>'.$date.'</span>';
         foreach ($poll['responses'] as $response) {
@@ -219,7 +219,7 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
         <div class="FKS_poll">';
         $r.='<div class="poll  open">';
         $r .= '
-            <h3>'.$poll['question'].'</h3>';
+            <h3>'.htmlspecialchars($poll['question']).'</h3>';
         $form = new Doku_Form(array('method' => 'POST'));
         $form->addHidden('target','fkspoll');
         $form->addHidden('question_id',$poll['question_id']);
@@ -228,7 +228,7 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
             $form->addHidden('type',1);
             foreach ($poll['answers'] as $answer) {
                 $form->addElement('<div class="answer">');
-                $form->addElement(form_makeRadioField('answer[id][]',$answer['answer_id'],$answer['answer']));
+                $form->addElement(form_makeRadioField('answer[id][]',$answer['answer_id'],htmlspecialchars($answer['answer'])));
                 $form->addElement('</div>');
             }
             if($poll['new_answer'] == "1"){
@@ -241,7 +241,7 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
             $form->addHidden('type',2);
             foreach ($poll['answers'] as $answer) {
                 $form->addElement('<div class="answer">');
-                $form->addElement(form_makeCheckboxField('answer[id][]',$answer['answer_id'],$answer['answer']));
+                $form->addElement(form_makeCheckboxField('answer[id][]',$answer['answer_id'],htmlspecialchars($answer['answer'])));
                 $form->addElement('</div>');
             }
             if($poll['new_answer'] == "1"){

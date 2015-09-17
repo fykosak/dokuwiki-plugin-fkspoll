@@ -46,46 +46,32 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
             msg('poll question has been created',1);
             return;
         }
+        $data = array();
+        if($this->IsValidNewQuestion($data)){
+            $sectok = md5($data['question'].serialize($data));
+            $data['sectok'] = $sectok;
 
-        $question = trim($INPUT->str('question'));
-        if($question == ""){
-            msg($this->getLang('empty_question'),-1);
-            return;
-        }
-        if($INPUT->str('time_type') == 'week'){
-            $s = strtotime($INPUT->str('valid_week'));
-            $p['valid_from'] = date('Y-m-d\TH:i:s',$s);
-            $p['valid_to'] = date('Y-m-d\TH:i:s',$s + (7 * 24 * 60 * 60) - 1);
-        }elseif($INPUT->str('time_type') == 'date'){
-            $p['valid_to'] = $INPUT->str('valid_to');
-            $p['valid_from'] = $INPUT->str('valid_from');
-        }else{
-            msg('no date type selected',-1);
-            return;
-        }
-        $p['new_answer'] = $INPUT->int('new_answer') ? 1 : 0;
-        $p['type'] = ( $INPUT->str('type') == 'multiple') ? 2 : 1;
-        $p['lang'] = $INPUT->str('lang');
-        /* only one save!!! */
-        $sectok = md5($question.serialize($p));
-        $p['sectok'] = $sectok;
+            if($this->helper->IsNewQuestion($sectok)){
+                $id = $this->helper->CreateNewquestion($data['question'],$data);
 
-        if($this->helper->IsNewQuestion($sectok)){
-            $id = $this->helper->CreateNewquestion($question,$p);
-
-            $answers = $INPUT->param('answers');
-            foreach ($answers as $answer) {
-                $text = trim($answer);
-                if($text == ""){
-                    continue;
+                
+                foreach ($data['answers'] as $answer) {
+                    
+                    $this->helper->CreateAnswer($id,$answer);
                 }
-                $this->helper->CreateAnswer($id,$text);
+                header('Location: '.$_SERVER['REQUEST_URI'].'&fks_poll=create_poll&msg=ok');
+                exit;
+            }else{
+                msg('alredy added',0);
             }
-            header('Location: '.$_SERVER['REQUEST_URI'].'&fks_poll=create_poll&msg=ok');
-            exit;
         }else{
-            msg('alredy added',0);
+            return;
         }
+
+
+
+
+        /* only one save!!! */
     }
 
     public function html() {
@@ -97,7 +83,7 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
         $form = new Doku_Form(array('method' => 'POST'));
         $form->addHidden('fks_poll','create_poll');
         $form->startFieldset($this->getLang('question'));
-        $form->addElement(form_makeTextField('question',"", $this->getLang('question'),null,'block',array('placeholder' => $this->getLang('question'),'required' => 'required','pattern'=>"\S.*")));
+        $form->addElement(form_makeTextField('question',"",$this->getLang('question'),null,'block',array('placeholder' => $this->getLang('question'),'required' => 'required','pattern' => "\S.*")));
         $form->endFieldset();
 
 
@@ -129,6 +115,51 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
 
         html_form('add',$form);
         echo '<hr>';
+    }
+
+    private function IsValidNewQuestion(&$data) {
+        global $INPUT;
+        $data['question'] = trim($INPUT->str('question'));
+        if($data['question'] == ""){
+            msg($this->getLang('empty_question'),-1);
+            return FALSE;
+        }
+        if($INPUT->str('time_type') == 'week'){
+            $s = strtotime($INPUT->str('valid_week'));
+            $data['valid_from'] = date('Y-m-d\TH:i:s',$s);
+            $data['valid_to'] = date('Y-m-d\TH:i:s',$s + (7 * 24 * 60 * 60) - 1);
+        }elseif($INPUT->str('time_type') == 'date'){
+            $data['valid_to'] = $INPUT->str('valid_to');
+            $data['valid_from'] = $INPUT->str('valid_from');
+        }else{
+            msg('no date type selected',-1);
+            return FALSE;
+        }
+
+
+        $data['new_answer'] = $INPUT->int('new_answer') ? 1 : 0;
+        $data['type'] = ( $INPUT->str('type') == 'multiple') ? 2 : 1;
+        $data['lang'] = $INPUT->str('lang');
+        $data['answers'] = $INPUT->param('answers');
+        $s = false;
+        foreach ($data['answers'] as $k => $answer) {
+            $text = trim($answer);
+
+            if($text == ""){
+
+                $s = ($s || false);
+            }else{
+                $data[$k] = $text;
+                $s = ($s || true);
+            }
+        }
+        
+        if(!($s || $data['new_answer'])){
+            
+            msg('nedovolená kombinácia parametrov',-1);
+            return FALSE;   
+        }
+        return true;
     }
 
 }
