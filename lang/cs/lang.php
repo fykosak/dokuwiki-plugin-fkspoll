@@ -14,20 +14,20 @@ $lang['answer']="odpověď";
 $lang['add_answer']="Přidat odpověď";
 $lang['answers']="Odpověď";
 $lang['send_answer']="Odeslat odpověď";
-$lang['choose_date']="Vyberte dátum";
-$lang['choose_week']="Vyberte týždeň";
-$lang['choose_date-week']="Vyberte týždeň alebo dátum";
+$lang['choose_date']="Vyberte datum";
+$lang['choose_week']="Vyberte týden";
+$lang['choose_date-week']="Vyberte týden, nebo datum";
 $lang['valid_week']="";
-$lang['single']="Single";
-$lang['multiple']="Multiple";
-$lang['new_answer']="Povoliť iné odpovede";
-$lang['poll_param']="Dalšie parametre";
-$lang['empty_question']="Prázdna otázka";
-$lang['create_poll']="Vytvotiť anketu";
+$lang['single']="Pouze jedna možnost";
+$lang['multiple']="Možnost výběru více odpovědí";
+$lang['new_answer']="Povolit možnost jiné odpovědi";
+$lang['poll_param']="Další parametry";
+$lang['empty_question']="Prázdná otázka";
+$lang['create_poll']="Vytvořit anketu";
 
-$lang['already_voted']="Already voted!!!";
+$lang['already_voted']="Vážený/vážená již jste hlasoval/a - tak už toho nechte!";
 
-$lang['another_answer']="iná odpoveď";
+$lang['another_answer']="Jiná odpověď";
 
 $lang['N-SG_vote']="hlas";
 $lang['N-PL_vote']="hlasy";
