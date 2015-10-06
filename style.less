@@ -6,52 +6,96 @@
  */
 .FKS_poll{
     .poll{
-        &.closed{
-            .answer{
-                border: 1px solid;
-                position: relative;
-                margin-bottom:.5em;
-                //height:2em;
-                border-radius:5px;
-                z-index:1;
+        .answer{
+            &.open{
+                &.check{
+                    label {
+                        span{
+                            font-weight: bold;
+                            padding: .25em;
+                            border-radius: 5px;
+                            width: 100%;
+                            display: block;
+                            background-color: lighten(@ini_text_alt,20%);
+                        }
+                        input[type="checkbox"]{
+                            float: left;
+                            margin: .5em;
+                            &:checked{
+                                & + span{
+                                    background-color: lighten(@ini_text_alt,30%); 
+                                }
+                            }
+
+                        }
+                    }
+                    &.text{
+                        label{
+                            background-color: lighten(@ini_text_alt,20%); 
+                        }
+                    }
+                }
+                &.radio{
+                    input.button{ 
+                        &:hover{
+                            background-color: lighten(@ini_text_alt,30%);
+                        }
+                        border: none;
+                        border-radius: 5px;
+
+                        background: none;
+                        background-color: lighten(@ini_text_alt,20%);
+
+                        padding: .5em;
+                        width: 100%;
+
+                        display: inline;
+                        z-index: 10;
+
+                        font-weight: bold;            
+                        text-align: center;
+                    }
+                }
+                &.radio,&.check{
+                    input.edit{
+                        width: 95%;
+                        margin-left: -0.25em;
+                    }
+                }
+                display: block;
+                width: 100%;
+                background: none;
+            }
+            &.closed{
+
                 .bar{
-                    border-radius:5px;
+                    border-radius: 5px;
                     position: absolute;
                     left: 0;
                     top:0;
                     height: 100%;
                     z-index: -1;
-                    //height: 1em;
                     background-color: lighten(@ini_text_alt,20%);
                 }
 
                 .name{
-                    span.text{
-                        font-weight: bold;
+                    span,span.text{
+                        font-weight: bold;            
+                        text-align: center;
                         padding-right: 1em;
                     }
-                    //position: absolute;
-
-                    padding: .25em;
-                    z-index: 10;
-                    text-align: center;
-                    width: 100%;
-                    // text-shadow: 0px 0px 5px @ini_background ;
+                    background:none;
                 }
+                border: 1px solid;
+                border-radius: 5px;
             }
 
-        }
-        &.open{
-            .answer{
-                //border-bottom: solid 1px;
-                margin: .5em;
-            }/*
-            .button{
-                background-color: @ini_text_alt;
-                &:hover{
-                    background-color: lighten(@ini_text_alt,10%);
-                }
-            }*/
+            //border: 1px solid;
+
+            position: relative;
+            margin-bottom:.5em;           
+            z-index:1;
+            text-align: center;
         }
         h3{
             margin-top: 0;
@@ -61,9 +105,18 @@
         background-color: #eee;
         border-radius: 5px;
     }
-    //font-size: 120%;
+    input.button{
+        width: 100%;
+        background: none;
+        padding: .5em;
+        background-color: #11da75;
+        border: solid 1px #11da75;
+        border-radius: 5px;
+        &:hover{
+            border: solid 1px #11da75;
+            background: none;
+            background-color: lighten(#11da75,20%);   
+        }
 
-
-
-
+    }
 }

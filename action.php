@@ -48,6 +48,10 @@ class action_plugin_fkspoll extends DokuWiki_Action_Plugin {
             return;
         }
         $question_id = (int) $INPUT->str('question_id');
+        if(!$this->helper->IsActualQuestion($question_id)){
+            msg('neplatná anketa');
+            return;
+        }
         if(!$this->helper->HasVoted($question_id)){
             $answers = $INPUT->param('answer');
             if($INPUT->int('type') == 1 && $answers['id'][0] != 0){
@@ -70,6 +74,7 @@ class action_plugin_fkspoll extends DokuWiki_Action_Plugin {
             }
             setcookie('fkspoll-'.$question_id,1,time() + 60 * 60 * 24 * 100);
             $_COOKIE['fkspoll-'.$question_id] = 1;
+            
             header('Location: '.$_SERVER['REQUEST_URI']);
             exit();
         }else{

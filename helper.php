@@ -183,15 +183,14 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
         $d1 = date('d\.m\. Y',strtotime($poll['valid_from']));
         $d2 = date('d\.m\. Y',strtotime($poll['valid_to']));
         $date = $d1.' - '.$d2;
-        $r = '
-        <div class="FKS_poll">';
-        $r.='<div class="poll closed">';
+
+
         $r .= '
             <h3>'.htmlspecialchars($poll['question']).'</h3>';
         $r .= '
             <span>'.$date.'</span>';
         foreach ($poll['responses'] as $response) {
-            $r .= '<div class="answer">';
+            $r .= '<div class="answer closed">';
             $r .= '<div class="bar" style="width: '.$response['per'].'%">';
             $r .= '</div>';
             $r .= '<div class="name">';
@@ -200,8 +199,8 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
             $r .= '</div>';
             $r .= '</div>';
         }
-        $r .= '</div>';
-        $r .= '</div>';
+
+
         return $r;
     }
 
@@ -215,51 +214,98 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
         if(!$poll){
             return;
         }
-        $r.='
-        <div class="FKS_poll">';
-        $r.='<div class="poll  open">';
+
         $r .= '
             <h3>'.htmlspecialchars($poll['question']).'</h3>';
-        $form = new Doku_Form(array('method' => 'POST'));
-        $form->addHidden('target','fkspoll');
-        $form->addHidden('question_id',$poll['question_id']);
+
         if($poll['type'] == 1){
-            /* single */
-            $form->addHidden('type',1);
             foreach ($poll['answers'] as $answer) {
-                $form->addElement('<div class="answer">');
-                $form->addElement(form_makeRadioField('answer[id][]',$answer['answer_id'],htmlspecialchars($answer['answer'])));
-                $form->addElement('</div>');
+                $r.= $this->GetRadioFieldAnswer($poll['question_id'],$answer,1);
             }
             if($poll['new_answer'] == "1"){
-                $form->addElement('<div class="answer">');
-                $form->addElement(form_makeRadioField('answer[id][]',0,$this->getLang('another_answer')));
-                $form->addElement(form_makeTextField('answer[text][]',""," "));
-                $form->addElement('</div>');
+                $r.= $this->GetNewAnswerField($poll['question_id'],$answer,1);
             }
         }elseif($poll['type'] == 2){
+            $form = new Doku_Form(array('method' => 'POST'));
+            $form->addHidden('target','fkspoll');
+            $form->addHidden('question_id',$poll['question_id']);
             $form->addHidden('type',2);
             foreach ($poll['answers'] as $answer) {
-                $form->addElement('<div class="answer">');
+                $form->addElement('<div class="answer open check">');
                 $form->addElement(form_makeCheckboxField('answer[id][]',$answer['answer_id'],htmlspecialchars($answer['answer'])));
                 $form->addElement('</div>');
             }
             if($poll['new_answer'] == "1"){
-                $form->addElement('<div class="answer">');
+                $form->addElement('<div class="answer open check text">');
                 $form->addElement(form_makeTextField('answer[text][]',"",'iná odpoveď'));
                 $form->addElement('</div>');
             }
+            ob_start();
 
-            /* multi */
+            $form->addElement(form_makeButton('submit',null,$this->getLang('send_answer')));
+            html_form('poll',$form);
+            $r.=ob_get_contents();
+            ob_end_clean();
         }
+
+        return $r;
+    }
+
+    public function GetRadioFieldAnswer($question_id,$answer,$type) {
+        $form = new Doku_Form(array('method' => 'POST'));
+        $form->addHidden('target','fkspoll');
+        $form->addHidden('question_id',$question_id);
+        $form->addHidden('type',$type);
+        $form->addElement('<div class="answer open radio">');
+
+        $form->addHidden('answer[id][]',$answer['answer_id']);
+        $form->addElement(form_makeButton('submit',null,htmlspecialchars($answer['answer'])));
+        $form->addElement('</div>');
         ob_start();
 
-        $form->addElement(form_makeButton('submit',null,$this->getLang('send_answer')));
+
         html_form('poll',$form);
         $r.=ob_get_contents();
         ob_end_clean();
-        $r.='</div>';
-        $r .= '</div>';
+        return $r;
+    }
+
+    /*
+      public function GetCheckboxFieldAnswer($question_id,$answer,$type) {
+
+      $form->addHidden('type',$type);
+      $form->addElement('<div class="answer">');
+
+      $form->addHidden('answer[id][]',$answer['answer_id']);
+      $form->addElement(form_makeButton('submit',null,htmlspecialchars($answer['answer'])));
+      $form->addElement('</div>');
+      ob_start();
+
+
+      html_form('poll',$form);
+      $r.=ob_get_contents();
+      ob_end_clean();
+      return $r;
+      }
+     */
+
+    public function GetNewAnswerField($question_id,$answer,$type) {
+        $form = new Doku_Form(array('method' => 'POST'));
+        $form->addHidden('target','fkspoll');
+        $form->addHidden('question_id',$question_id);
+        $form->addHidden('type',$type);
+
+        $form->addElement('<div class="answer open radio text">');
+        $form->addHidden('answer[id][]',0);
+        $form->addElement(form_makeTextField('answer[text][]',""," "));
+        $form->addElement(form_makeButton('submit',null,htmlspecialchars($this->getLang('another_answer'))));
+        $form->addElement('</div>');
+        ob_start();
+
+
+        html_form('poll',$form);
+        $r.=ob_get_contents();
+        ob_end_clean();
         return $r;
     }
 
@@ -302,6 +348,21 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
         $res = $this->sqlite->query($sql,$sectok);
         $ar = $this->sqlite->res2arr($res);
         return (empty($ar) ? 1 : 0);
+    }
+
+    public function IsActualQuestion($id) {
+        $sql = 'SELECT * FROM '.self::db_table_question.' WHERE question_id=? ';
+        $res = $this->sqlite->query($sql,$id);
+        $ars = $this->sqlite->res2arr($res);
+
+
+        foreach ($ars as $ar) {
+            if(strtotime($ar['valid_from']) < time() && strtotime($ar['valid_to']) > time()){
+
+                return true;
+            }
+        }
+        return false;
     }
 
 }

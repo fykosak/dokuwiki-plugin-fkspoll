@@ -38,7 +38,6 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
 
     public function handle() {
         global $INPUT;
-
         if($INPUT->str('fks_poll') !== 'create_poll'){
             return;
         }
@@ -50,13 +49,10 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
         if($this->IsValidNewQuestion($data)){
             $sectok = md5($data['question'].serialize($data));
             $data['sectok'] = $sectok;
-
             if($this->helper->IsNewQuestion($sectok)){
                 $id = $this->helper->CreateNewquestion($data['question'],$data);
-
-                
+                var_dump($data);
                 foreach ($data['answers'] as $answer) {
-                    
                     $this->helper->CreateAnswer($id,$answer);
                 }
                 header('Location: '.$_SERVER['REQUEST_URI'].'&fks_poll=create_poll&msg=ok');
@@ -141,23 +137,23 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
         $data['type'] = ( $INPUT->str('type') == 'multiple') ? 2 : 1;
         $data['lang'] = $INPUT->str('lang');
         $data['answers'] = $INPUT->param('answers');
-        $s = false;
+        
         foreach ($data['answers'] as $k => $answer) {
             $text = trim($answer);
 
             if($text == ""){
-
-                $s = ($s || false);
+                unset($data['answers'][$k]);
+             
             }else{
-                $data[$k] = $text;
-                $s = ($s || true);
+                $data['answers'][$k] = $text;
+              
             }
         }
-        
-        if(!($s || $data['new_answer'])){
-            
+
+        if(!(count($data['answers'])>1|| $data['new_answer'])){
+
             msg('nedovolená kombinácia parametrov',-1);
-            return FALSE;   
+            return FALSE;
         }
         return true;
     }

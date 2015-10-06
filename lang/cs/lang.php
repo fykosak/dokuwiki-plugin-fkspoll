@@ -32,3 +32,5 @@ $lang['another_answer']="Jiná odpověď";
 $lang['N-SG_vote']="hlas";
 $lang['N-PL_vote']="hlasy";
 $lang['G-PL_vote']="hlasů";
+
+$lang['archive']='Archív';

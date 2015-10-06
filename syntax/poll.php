@@ -62,10 +62,19 @@ class syntax_plugin_fkspoll_poll extends DokuWiki_Syntax_Plugin {
         list(,$param) = $data;
         
         if($mode == 'xhtml'){
-            
             $renderer->nocache();
+            $renderer->doc.= '<div class="FKS_poll">';
+            $renderer->doc.='<div class="poll">';
+            
+            if(auth_quickaclcheck('start') >= 4){
+                $renderer->doc.='<span>Maybe not working</span>';
+                $renderer->doc.='<a href="?do=admin&page=fkspoll"><button>'.$this->getLang('create_poll').'</button></a>';
+            }
             $poll = $this->helper->getCurrentPoll($param['lang']);
             $renderer->doc.= $this->helper->getHtml($poll);
+            $renderer->doc.= '<a href="'.wl('anketa').'">'.$this->getLang('archive').'</a>';
+            $renderer->doc.='</div>';
+            $renderer->doc.='</div>';
         }
 
         return false;
