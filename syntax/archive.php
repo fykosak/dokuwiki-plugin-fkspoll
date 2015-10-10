@@ -1,12 +1,10 @@
 <?php
 
-
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author Jan Prachař
  * @author Michal Červeňák <miso@fykos.cz>
  */
-
 if(!defined('DOKU_INC')){
     die();
 }
@@ -53,7 +51,7 @@ class syntax_plugin_fkspoll_archive extends DokuWiki_Syntax_Plugin {
         }else{
 
             $lang = $conf['lang'];
-        }        return array($state,array('lang' => $lang));
+        } return array($state,array('lang' => $lang));
     }
 
     public function render($mode,Doku_Renderer &$renderer,$data) {
@@ -64,7 +62,11 @@ class syntax_plugin_fkspoll_archive extends DokuWiki_Syntax_Plugin {
             $polls = $this->helper->AllPolls($param['lang']);
             //$renderer->doc.= '<h1>všetky ankety</h1>';
             foreach (array_reverse($polls) as $poll) {
+                $renderer->doc.= '<div class="FKS_poll">';
+                $renderer->doc.='<div class="poll">';
                 $renderer->doc.= $this->helper->GetClosedPollHtml($poll,true);
+                $renderer->doc.='</div>';
+                $renderer->doc.='</div>';
             }
         }
 

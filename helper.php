@@ -102,9 +102,9 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
         foreach ($ans as $an) {
             $sql = 'SELECT COUNT(*) AS count
             FROM '.self::db_table_response.'        
-            WHERE answer_id=?
+            WHERE answer_id=? AND question_id=?
             GROUP BY answer_id';
-            $res = $this->sqlite->query($sql,$an['answer_id']);
+            $res = $this->sqlite->query($sql,$an['answer_id'],$poll['question_id']);
             $c = $this->sqlite->res2single($res);
             $sum+=$c;
             $response[] = array('count' => $c,'answer' => $an['answer']);
@@ -219,12 +219,37 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
             <h3>'.htmlspecialchars($poll['question']).'</h3>';
 
         if($poll['type'] == 1){
+
+            $form = new Doku_Form(array('method' => 'POST'));
+            $form->addHidden('target','fkspoll');
+            $form->addHidden('question_id',$poll['question_id']);
+            $form->addHidden('type',1);
+
+
+
             foreach ($poll['answers'] as $answer) {
-                $r.= $this->GetRadioFieldAnswer($poll['question_id'],$answer,1);
+                $form->addElement('<div class="answer open radio">');
+                $form->addHidden('answer[id][]',$answer['answer_id']);
+                $form->addElement(form_makeRadioField('answer[id][]',$answer['answer_id'],htmlspecialchars($answer['answer'])));
+                $form->addElement('</div>');
             }
             if($poll['new_answer'] == "1"){
-                $r.= $this->GetNewAnswerField($poll['question_id'],$answer,1);
+                $form->addElement('<div class="answer radio open text">');
+                //$form->addElement('<label><input type="radio" name="answer[id][]" value="0"> <span>Jiná odpověď</span><input type="text" name="answer[text][]" class="edit"></label>');
+                //$form->addElement('<label for="poll_new_answer"><input type="radio" id="poll_new_answer" name="answer[id][]" value="0"><input type="text"  name="answer[text][]" class="edit" placeholder="Jiná odpověď"></label>');
+               $form->addElement(form_makeRadioField('answer[id][]',0,$this->getLang('another_answer')));
+               $form->addElement(form_makeTextField('answer[text][]',"","","",null,array('placeholder'=>$this->getLang('another_answer'))));
+                $form->addElement('</div>');
             }
+
+            $form->addElement(form_makeButton('submit',null,$this->getLang('send_answer')));
+
+            ob_start();
+
+
+            html_form('poll',$form);
+            $r.=ob_get_contents();
+            ob_end_clean();
         }elseif($poll['type'] == 2){
             $form = new Doku_Form(array('method' => 'POST'));
             $form->addHidden('target','fkspoll');
@@ -259,7 +284,7 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
         $form->addElement('<div class="answer open radio">');
 
         $form->addHidden('answer[id][]',$answer['answer_id']);
-        $form->addElement(form_makeButton('submit',null,htmlspecialchars($answer['answer'])));
+        $form->addElement(form_makeButton('submit',null,$answer['answer']));
         $form->addElement('</div>');
         ob_start();
 

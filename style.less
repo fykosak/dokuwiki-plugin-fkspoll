@@ -9,40 +9,18 @@
         .answer{
             &.open{
                 &.check{
-                    label {
-                        span{
-                            word-wrap:break-word;
-                            font-weight: bold;
-                            padding: .25em;
-                            border-radius: 5px;
-                            width: 100%;
-                            display: block;
-                            background-color: lighten(@ini_text_alt,20%);
-                        }
-                        input[type="checkbox"]{
-                            float: left;
-                            margin: .5em;
-                            &:checked{
-                                & + span{
-                                    background-color: lighten(@ini_text_alt,30%); 
-                                }
-                            }
 
-                        }
-                    }
-                    &.text{
-                        label{
-                            background-color: lighten(@ini_text_alt,20%); 
-                        }
-                    }
+
                 }
                 &.radio{
+                    /*
                     input.button{ 
                         &:hover{
                             background-color: lighten(@ini_text_alt,30%);
                         }
+                        cursor: pointer;
                         word-wrap:break-word;
-                        
+
                         border: none;
                         border-radius: 5px;
 
@@ -57,12 +35,57 @@
 
                         font-weight: bold;            
                         text-align: center;
-                    }
+                    }*/
                 }
                 &.radio,&.check{
+
+                    label {
+                        span{
+                            word-wrap:break-word;
+                            font-weight: bold;
+                            padding-top: .25em;
+                            padding-bottom: .25em;
+                            border-radius: 5px;
+                            width: 100%;
+                            display: block;
+                            background-color: lighten(@ini_text_alt,20%);
+                        }
+                        input[type="checkbox"],input[type="radio"]{
+                            &:checked{
+                                & + span{
+                                    background-color: lighten(@ini_text_alt,30%); 
+                                }
+                            }
+                            float: left;
+                            margin: .5em;
+                            //display: none;
+
+                        }
+                    }
                     input.edit{
                         width: 95%;
                         margin-left: -0.25em;
+                    }
+                }
+
+                &.text{
+                    label{
+                         span{
+                            background: none;
+                        }
+                        &:nth-child(1){
+                           width: 40%; 
+                           border-radius: 5px 0  0 5px  ;
+                        }
+                        &:nth-child(2){
+                           width: 60%; 
+                           border-radius:  0   5px 5px 0 ;
+                        }
+                        
+                        float: left;
+                         
+                        background-color: lighten(@ini_text_alt,20%); 
+                       
                     }
                 }
                 display: block;
@@ -73,6 +96,8 @@
 
                 .bar{
                     border-radius: 5px;
+                    border-top-right-radius: 0px;
+                    border-bottom-right-radius: 0px;
                     position: absolute;
                     left: 0;
                     top:0;
@@ -90,7 +115,7 @@
                     }
                     background:none;
                 }
-                border: 1px solid;
+                border: 1px solid #bbb;
                 border-radius: 5px;
             }
 
@@ -110,6 +135,7 @@
         border-radius: 5px;
     }
     input.button{
+        margin-top: .5em;
         width: 100%;
         background: none;
         padding: .5em;
