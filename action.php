@@ -28,8 +28,6 @@ class action_plugin_fkspoll extends DokuWiki_Action_Plugin {
      * @param Doku_Event_Handler $controller
      */
     public function register(Doku_Event_Handler $controller) {
-
-
         $controller->register_hook('ACTION_ACT_PREPROCESS','BEFORE',$this,'Response');
     }
 

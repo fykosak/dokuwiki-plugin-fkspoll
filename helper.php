@@ -239,7 +239,10 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
                 //$form->addElement('<label for="poll_new_answer"><input type="radio" id="poll_new_answer" name="answer[id][]" value="0"><input type="text"  name="answer[text][]" class="edit" placeholder="Jiná odpověď"></label>');
                $form->addElement(form_makeRadioField('answer[id][]',0,$this->getLang('another_answer')));
                $form->addElement(form_makeTextField('answer[text][]',"","","",null,array('placeholder'=>$this->getLang('another_answer'))));
-                $form->addElement('</div>');
+               $form->addElement('<div class="clearer"></div>');
+               
+               $form->addElement('</div>');
+                
             }
 
             $form->addElement(form_makeButton('submit',null,$this->getLang('send_answer')));
@@ -263,6 +266,7 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
             if($poll['new_answer'] == "1"){
                 $form->addElement('<div class="answer open check text">');
                 $form->addElement(form_makeTextField('answer[text][]',"",'iná odpoveď'));
+                $form->addElement('<div class="clearer"></div>');
                 $form->addElement('</div>');
             }
             ob_start();
