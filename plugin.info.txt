@@ -1,0 +1,7 @@
+base   fkspoll
+author Michal Červňák
+email  miso@fykos.cz
+date   2014-03-18
+name   FKSpoll
+desc   FYKOS's poll
+url    https://github.com/cevro/dokuwiki-plugin-fkspoll.git

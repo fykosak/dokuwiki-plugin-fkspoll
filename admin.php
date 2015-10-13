@@ -51,7 +51,7 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
             $data['sectok'] = $sectok;
             if($this->helper->IsNewQuestion($sectok)){
                 $id = $this->helper->CreateNewquestion($data['question'],$data);
-                var_dump($data);
+                
                 foreach ($data['answers'] as $answer) {
                     $this->helper->CreateAnswer($id,$answer);
                 }
@@ -84,12 +84,12 @@ class admin_plugin_fkspoll extends DokuWiki_Admin_Plugin {
 
 
         $form->startFieldset($this->getLang('choose_date-week'));
-        $form->addElement(form_makeRadioField('time_type','week',$this->getLang('choose_week'),null,null,array('required' => 'required')));
-        $form->addElement(form2_makeWeekField('valid_week',null,$this->getLang('valid_week'),null,'block'));
+        $form->addElement(form_makeRadioField('time_type','week',$this->getLang('choose_week'),'time_week',null,array('required' => 'required')));
+        $form->addElement(form2_makeWeekField('valid_week',null,$this->getLang('valid_week'),'week_field','block'));
         $form->addElement('<hr />');
-        $form->addElement(form_makeRadioField('time_type','date',$this->getLang('choose_date'),null,null,array('required' => 'required')));
-        $form->addElement(form2_makeDateTimeField('valid_from',date('Y-m-d',time()).'T00:00:00',$this->getLang('valid_from'),null,'block'));
-        $form->addElement(form2_makeDateTimeField('valid_to',date('Y-m-d',time() + (7 * 24 * 60 * 60)).'T23:59:59',$this->getLang('valid_to'),null,'block'));
+        $form->addElement(form_makeRadioField('time_type','date',$this->getLang('choose_date'),'time_date',null,array('required' => 'required')));
+        $form->addElement(form2_makeDateTimeField('valid_from',date('Y-m-d',time()).'T00:00:00',$this->getLang('valid_from'),'date_field_from','block'));
+        $form->addElement(form2_makeDateTimeField('valid_to',date('Y-m-d',time() + (7 * 24 * 60 * 60)).'T23:59:59',$this->getLang('valid_to'),'date_field_to','block'));
         $form->endFieldset();
 
         $form->startFieldset($this->getLang('poll_param'));

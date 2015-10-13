@@ -11,7 +11,7 @@ $lang['valid_to']="do";
 $lang['valid_from']="od";
 
 $lang['answer']="odpověď";
-$lang['add_answer']="Přidat odpověď";
+$lang['add_answer']="Přidat další odpověď";
 $lang['answers']="Odpověď";
 $lang['send_answer']="Odeslat odpověď";
 $lang['choose_date']="Vyberte datum";

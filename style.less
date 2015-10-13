@@ -4,6 +4,18 @@
  * @author Jan Prachař
  * @author Michal Červeňák <miso@fykos.cz>
  */
+
+@media  (max-width:599px){
+    .FKS_poll{
+        width: 100%;
+    }
+}
+@media  (min-width:600px){
+    .FKS_poll{
+        float:left;
+        width: 33.33333%;
+    }
+}
 .FKS_poll{
     .poll{
         .answer{
@@ -89,9 +101,6 @@
                 border: 1px solid #bbb;
                 border-radius: 5px;
             }
-
-            //border: 1px solid;
-
             position: relative;
             margin-bottom:.5em;           
             z-index:1;
@@ -106,6 +115,11 @@
         border-radius: 5px;
     }
     input.button{
+        &:hover{
+            border: solid 1px #11da75;
+            background: none;
+            background-color: lighten(#11da75,20%);   
+        }
         margin-top: .5em;
         width: 100%;
         background: none;
@@ -113,11 +127,6 @@
         background-color: #11da75;
         border: solid 1px #11da75;
         border-radius: 5px;
-        &:hover{
-            border: solid 1px #11da75;
-            background: none;
-            background-color: lighten(#11da75,20%);   
-        }
 
     }
 }
