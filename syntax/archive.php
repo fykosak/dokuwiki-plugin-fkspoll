@@ -29,7 +29,7 @@ class syntax_plugin_fkspoll_archive extends DokuWiki_Syntax_Plugin {
     }
 
     public function getAllowedTypes() {
-        return array('formatting','substition','disabled');
+        return array();
     }
 
     public function getSort() {
@@ -61,13 +61,13 @@ class syntax_plugin_fkspoll_archive extends DokuWiki_Syntax_Plugin {
             $renderer->nocache();
             $polls = $this->helper->AllPolls($param['lang']);
             //$renderer->doc.= '<h1>všetky ankety</h1>';
+            $renderer->doc.= '<div class="polls">';
             foreach (array_reverse($polls) as $poll) {
-                $renderer->doc.= '<div class="FKS_poll">';
                 $renderer->doc.='<div class="poll">';
                 $renderer->doc.= $this->helper->GetClosedPollHtml($poll,true);
                 $renderer->doc.='</div>';
-                $renderer->doc.='</div>';
             }
+            $renderer->doc.='</div>';
         }
 
         if($mode == 'metadata'){

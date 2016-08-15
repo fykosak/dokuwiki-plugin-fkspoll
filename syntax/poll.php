@@ -1,12 +1,9 @@
 <?php
 
-
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author Jan Prachař
  * @author Michal Červeňák <miso@fykos.cz>
  */
-
 if(!defined('DOKU_INC')){
     die();
 }
@@ -15,8 +12,6 @@ if(!defined('DOKU_PLUGIN')){
 }
 
 class syntax_plugin_fkspoll_poll extends DokuWiki_Syntax_Plugin {
-
-    
 
     private $helper;
 
@@ -33,7 +28,7 @@ class syntax_plugin_fkspoll_poll extends DokuWiki_Syntax_Plugin {
     }
 
     public function getAllowedTypes() {
-        return array('formatting','substition','disabled');
+        return array();
     }
 
     public function getSort() {
@@ -49,38 +44,36 @@ class syntax_plugin_fkspoll_poll extends DokuWiki_Syntax_Plugin {
      */
     public function handle($match,$state) {
         global $conf;
-        $matches=array();
-        if(preg_match('/~~FKSPOLL-([a-z]*?)~~/',$match,$matches)){
-            list(,$lang)=$matches;
-        }else{           
-            $lang=$conf['lang'];
+        $matches = array();
+        if(preg_match('/~~FKSPOLL(-([a-z]*?))?~~/',$match,$matches)){
+            list(,,$lang) = $matches;
+        }else{
+            $lang = $conf['lang'];
         }
-        return array($state,array('lang'=>$lang));
+        return array($state,array('lang' => $lang));
     }
 
     public function render($mode,Doku_Renderer &$renderer,$data) {
         list(,$param) = $data;
-        
+        global $ID;
         if($mode == 'xhtml'){
             $renderer->nocache();
-            $renderer->doc.= '<div class="FKS_poll">';
-            $renderer->doc.='<div class="poll">';
-            
-            if(auth_quickaclcheck('start') >= 4){
-                $renderer->doc.='<span>Maybe not working</span>';
-                $renderer->doc.='<a href="?do=admin&page=fkspoll"><button>'.$this->getLang('create_poll').'</button></a>';
+            $renderer->doc.= '<div class="polls">';
+            $polls = $this->helper->getCurrentPolls($param['lang']);
+            foreach ($polls as $poll) {
+                $renderer->doc.='<div class="poll">';
+                $renderer->doc.= $this->helper->renderPoll($poll);
+                $renderer->doc.= '<a href="'.wl('anketa').'"><span class="btn">'.$this->getLang('archive').'</span></a>';
+                if($this->helper->canEdit()){
+                    $renderer->doc.='<a href="'.wl($ID,array('do' => 'fkspoll_edit','question_id' => $poll['question_id'])).'"><span class="btn">'.$this->getLang('edit_poll').'</span></a>';
+                    $renderer->doc.='<a href="'.wl($ID,array('do' => 'fkspoll_edit')).'"><span class="btn">'.$this->getLang('create_poll').'</span></a>';
+                }
+                $renderer->doc.='</div>';
             }
-            $poll = $this->helper->getCurrentPoll($param['lang']);
-            $renderer->doc.= $this->helper->getHtml($poll);
-            $renderer->doc.= '<a href="'.wl('anketa').'">'.$this->getLang('archive').'</a>';
-            $renderer->doc.='</div>';
             $renderer->doc.='</div>';
         }
 
         return false;
     }
-
-    
-
 
 }

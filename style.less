@@ -1,132 +1,110 @@
 
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author Jan Prachař
  * @author Michal Červeňák <miso@fykos.cz>
  */
 
-@media  (max-width:599px){
-    .FKS_poll{
-        width: 100%;
+.polls{
+    *{
+        box-sizing: border-box;
     }
-}
-@media  (min-width:600px){
-    .FKS_poll{
-        float:left;
-        width: 33.33333%;
-    }
-}
-.FKS_poll{
+    display:flex;
+    justify-content:space-around;
+    flex-wrap:wrap;
     .poll{
-        .answer{
-            &.open{
-                &.check{
-                }
-                &.radio{                  
-                }
-                &.radio,&.check{
+        &>a{
+            display: block;
+        }
+        border: solid 1px @ini_text_alt;
 
-                    label {
-                        span{
-                            word-wrap:break-word;
-                            font-weight: bold;
-                            padding-top: .25em;
-                            padding-bottom: .25em;
-                            border-radius: 5px;
-                            width: 100%;
-                            display: block;
-                            background-color: lighten(@ini_text_alt,20%);
-                        }
-                        input[type="checkbox"],input[type="radio"]{
-                            &:checked{
-                                & + span{
-                                    background-color: lighten(@ini_text_alt,30%); 
-                                }
-                            }
-                            width: 2em;
-                            height: 2em;
-                            float: left;
-                        }
-                    }
-                    input.edit{
-                        width: 95%;
-                        margin-left: -0.25em;
-                    }
-                }
-
-                &.text{
-
-                    label{
-                        span{
-                            background: none;
-                        }
-                        &:nth-child(1){
-                            width: 100%; 
-                            // border-radius: 5px 0  0 5px  ;
-                        }
-                        &:nth-child(2){
-                            width: 100%; 
-                            //border-radius:  0   5px 5px 0 ;
-                        }
-                        float: left;
-                    }
-                    background-color: lighten(@ini_text_alt,20%);
-                    border-radius: 5px;
-                }
-                display: block;
-                width: 100%;
-                background: none;
+        label{
+            padding: .25em;
+            display: flex;
+            span{
+                order:2;
             }
+            input{
+                order:0;
+            }
+        }
+        input,button{
+            margin: 0 .5em;
+        }
+        button{
+            display: block;
+        }
+
+
+
+        .question,.duration{
+            .question-text{
+                font-size: 130%;
+            }
+            padding: .5em;
+            color:white;
+            background-color: @ini_text_alt;
+        }
+
+
+        .answer{
+            padding: .5em;
+            border-bottom: solid 1px #ccc;
+
+
             &.closed{
-                .bar{
-                    border-radius: 5px;
-                    border-top-right-radius: 0px;
-                    border-bottom-right-radius: 0px;
-                    position: absolute;
-                    left: 0;
-                    top:0;
+                .bar-container{
+                    .bar{
+                       
+                        height: 1em;
+                        width: 0;
+                        background-color: @ini_text_alt;
+                        display: block;                       
+                    }                  
                     height: 100%;
                     z-index: -1;
-                    background-color: lighten(@ini_text_alt,20%);
                 }
                 .name{
-                    span,span.text{
-                        word-wrap:break-word;
-                        font-weight: bold;            
-                        text-align: center;
-                        padding-right: 1em;
+                    &>*{
+                        display: inline-block;
                     }
-                    background:none;
-                }
-                border: 1px solid #bbb;
-                border-radius: 5px;
+                    span.count-text{
+                        &:before{
+                            content: ": ";
+                        }
+                        font-style: italic;
+                    }
+                    span.answer-text{                            
+                        word-wrap:break-word;      
+                    }                   
+                }               
             }
-            position: relative;
-            margin-bottom:.5em;           
-            z-index:1;
-            text-align: center;
         }
         h3{
             margin-top: 0;
         }
-        padding: 1em;
-        margin-bottom: .5em;
-        background-color: #eee;
-        border-radius: 5px;
     }
-    input.button{
-        &:hover{
-            border: solid 1px #11da75;
-            background: none;
-            background-color: lighten(#11da75,20%);   
-        }
-        margin-top: .5em;
-        width: 100%;
-        background: none;
-        padding: .5em;
-        background-color: #11da75;
-        border: solid 1px #11da75;
-        border-radius: 5px;
 
+    width: 100%;
+}
+
+form.poll_edit{
+    fieldset{
+        label{
+            display: block;
+        }
+        &.question{
+            input{
+                width: 100%;
+            }
+        }
+        &.params{
+
+        }
+        &.answers{
+
+        }
+        width: 100%;
     }
+
+
 }

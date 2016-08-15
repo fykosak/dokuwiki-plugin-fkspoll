@@ -7,39 +7,34 @@
 
 jQuery(function () {
     var $ = jQuery;
-    $("#add_poll_answer").click(function () {
+    $("form.poll_edit .answers button.add_answer").click(function () {
+      
+        var $clone = $(this).siblings('label.new').eq(0).clone();
 
-        var html = $(this).parent('fieldset').find('label').html();
-
-        $(this).parent('fieldset').append('<label class="block">' + html + '</label><br />');
+        $clone.find('input').val('');
+        $(this).before($clone); 
+      
     });
-
-
-    $(window).load(function () {
-        $('#week_field').parent('label').hide();
-        $('#date_field_from').parent('label').hide();
-        $('#date_field_to').parent('label').hide();
-
-    });
-
-
-    $('input[name=time_type]').change(function () {
-
-        if ($('#time_week').is(':checked')) {
-            $('#week_field').parent('label').show();
-
+ 
+    $('.polls .poll input[type="text"]').on('input', function () {
+        if ($(this).val() == '') {
+            $(this).siblings()
+                    .find('input[type="radio"]')
+                    .prop('disabled', false);
         } else {
-            $('#week_field').parent('label').hide();
-
+            $(this).siblings()
+                    .find('input[type="radio"]')
+                    .prop('disabled', true);
         }
 
-        if ($('#time_date').is(':checked')) {
-            $('#date_field_from').parent('label').show();
-            $('#date_field_to').parent('label').show();
-        }
-        else {
-            $('#date_field_from').parent('label').hide();
-            $('#date_field_to').parent('label').hide();
-        }
+    });
+    $(document).ready(function () {
+        $('.polls .poll .answer .bar').each(function () {
+            var w = $(this).data('percent');
+        
+            $(this).delay(2000)
+                    .animate({width: w + "%"}, 2000, 'easeOutQuad');
+        });
+
     });
 });
