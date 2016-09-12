@@ -362,12 +362,9 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
     public function isActualQuestion($id) {
         $sql = 'SELECT * FROM '.self::db_table_question.' WHERE question_id=? ';
         $res = $this->sqlite->query($sql,$id);
-        $ars = $this->sqlite->res2arr($res);
-
-        foreach ($ars as $ar) {
-            if(strtotime($ar['valid_from']) < time() && strtotime($ar['valid_to']) > time()){
-                return true;
-            }
+        $ar = $this->sqlite->res2arr($res)[0];
+        if(strtotime($ar['valid_from']) < time() && (strtotime($ar['valid_to'])+60*60*24) > time()){
+            return true;
         }
         return false;
     }

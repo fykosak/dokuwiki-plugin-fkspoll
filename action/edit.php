@@ -39,11 +39,9 @@ class action_plugin_fkspoll_edit extends DokuWiki_Action_Plugin {
         }
 
         $event->preventDefault();
-
         global $INPUT;
         global $lang;
-        helper_plugin_fkshelper::HTML5Test();
-        ptln('<h1>'.$this->getLang('create_poll').'</h1>');
+        ptln('<h1>'.hsc($this->getLang('create_poll')).'</h1>');
 
         $poll = array();
 
@@ -188,19 +186,15 @@ class action_plugin_fkspoll_edit extends DokuWiki_Action_Plugin {
             $data['sectok'] = $sectok;
             if($data['question_id']){
                 $this->helper->EditQuestion($data);
-                $this->helper->EditAnswers($question_id,$data['answers']);
+                $this->helper->EditAnswers($data['question_id'],$data['answers']);
                 $this->helper->CreateAnswers($data['question_id'],$data['new_answers']);
                 msg('edited');
             }else{
                 if($this->helper->IsNewQuestion($sectok)){
                     $id = $this->helper->CreateQuestion($data);
-
-
                     $this->helper->CreateAnswers($id,$data['new_answers']);
-
                     msg('added');
                 }else{
-
                     msg('alredy added',0);
                 }
             }
