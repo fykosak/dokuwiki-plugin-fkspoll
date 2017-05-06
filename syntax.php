@@ -88,7 +88,7 @@ class syntax_plugin_fkspoll extends DokuWiki_Syntax_Plugin {
         $polls = $this->helper->getCurrentPolls($param['lang'] ?: 'cs');
         foreach ($polls as $poll) {
             $type = self::$types[array_rand(self::$types)];
-            $renderer->doc .= '<div class="card  card-outline-' . $type . ' mb-3">';
+            $renderer->doc .= '<div class="poll card card-outline-' . $type . ' mb-3">';
             $renderer->doc .= $this->helper->renderPoll($poll, $type);
             $this->renderFields($renderer, $poll);
             $renderer->doc .= '</div>';

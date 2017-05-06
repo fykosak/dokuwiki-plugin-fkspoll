@@ -2,6 +2,8 @@
 
 use dokuwiki\Form\Form;
 
+require_once(__DIR__ . '/form/checkable-element.php');
+
 class helper_plugin_fkspoll extends DokuWiki_Plugin {
 
     const db_table_answer = 'poll_answer';
@@ -34,10 +36,9 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
     }
 
     public function saveResponse($question_id, $id) {
-        $sql = 'INSERT INTO ' . self::db_table_response . ' 
+        $this->sqlite->query('INSERT INTO ' . self::db_table_response . ' 
             (question_id,answer_id,users_id,remote_addr,remote_host,user_agent,accept,accept_language,referer,`from`,cookie,inserted) 
-            VALUES(?,?,?,?,?,?,?,?,?,?,?,?)';
-        $this->sqlite->query($sql, $question_id, $id, @$_SESSION['id'], @$_SERVER['REMOTE_ADDR'], @$_SERVER['REMOTE_HOST'], @$_SERVER['HTTP_USER_AGENT'], @$_SERVER['HTTP_ACCEPT'], @$_SERVER['HTTP_ACCEPT_LANGUAGE'], @$_SERVER['HTTP_REFERER'], $_SERVER['HTTP_FROM'], serialize($_COOKIE), \time());
+            VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', $question_id, $id, @$_SESSION['id'], @$_SERVER['REMOTE_ADDR'], @$_SERVER['REMOTE_HOST'], @$_SERVER['HTTP_USER_AGENT'], @$_SERVER['HTTP_ACCEPT'], @$_SERVER['HTTP_ACCEPT_LANGUAGE'], @$_SERVER['HTTP_REFERER'], $_SERVER['HTTP_FROM'], serialize($_COOKIE), \time());
     }
 
     public function createAnswers($id, $answers) {
@@ -46,39 +47,36 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
         }
     }
 
-    public function editAnswers($question_id, $answers) {
+    public function editAnswers($questionID, $answers) {
         foreach ($answers as $id => $answer) {
-            $this->editAnswer($question_id, $id, $answer);
+            $this->editAnswer($questionID, $id, $answer);
         }
     }
 
     public function editAnswer($question_id, $id, $answer) {
         if (trim($answer)) {
-            $sql2 = 'UPDATE ' . self::db_table_answer . ' 
+            $this->sqlite->query('UPDATE ' . self::db_table_answer . ' 
                     SET answer=?
-                    WHERE answer_id=? ';
-            $this->sqlite->query($sql2, $answer, $id);
+                    WHERE answer_id=? ', $answer, $id);
         } else {
-            $sql2 = 'DELETE FROM ' . self::db_table_answer . '                     
-                    WHERE answer_id=? ';
-            $this->sqlite->query($sql2, $id);
+            $this->sqlite->query('DELETE FROM ' . self::db_table_answer . '                     
+                    WHERE answer_id=? ', $id);
         }
     }
 
 
     public function createAnswer($question_id, $text) {
         if (!$this->answer2ID($question_id, $text)) {
-            $sql2 = 'INSERT INTO ' . self::db_table_answer . ' 
+            $this->sqlite->query('INSERT INTO ' . self::db_table_answer . ' 
                     (question_id,answer) 
-                    VALUES(?,?)';
-            $this->sqlite->query($sql2, $question_id, $text);
+                    VALUES(?,?)', $question_id, $text);
         }
         return $this->answer2ID($question_id, $text);
     }
 
     public function answer2ID($question_id, $text) {
-        $sql1 = 'SELECT answer_id FROM ' . self::db_table_answer . ' WHERE question_id=? AND answer=?';
-        $res = $this->sqlite->query($sql1, $question_id, $text);
+
+        $res = $this->sqlite->query('SELECT answer_id FROM ' . self::db_table_answer . ' WHERE question_id=? AND answer=?', $question_id, $text);
         return $this->sqlite->res2single($res);
     }
 
@@ -91,11 +89,10 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
         $response = array();
         $sum = 0;
         foreach ($ans as $an) {
-            $sql = 'SELECT COUNT(*) AS count
+            $res = $this->sqlite->query('SELECT COUNT(*) AS count
             FROM ' . self::db_table_response . '        
             WHERE answer_id=? AND question_id=?
-            GROUP BY answer_id';
-            $res = $this->sqlite->query($sql, $an['answer_id'], $poll['question_id']);
+            GROUP BY answer_id', $an['answer_id'], $poll['question_id']);
             $c = $this->sqlite->res2single($res);
             $sum += $c;
             $response[] = ['count' => $c, 'answer' => $an['answer']];
@@ -143,11 +140,9 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
     }
 
     public function getAnswers($id) {
-        $sql = 'SELECT * FROM ' . self::db_table_answer . '
-            WHERE question_id=?';
-        $res = $this->sqlite->query($sql, $id);
-        $answers = $this->sqlite->res2arr($res);
-        return $answers;
+        $res = $this->sqlite->query('SELECT * FROM ' . self::db_table_answer . '
+            WHERE question_id=?', $id);
+        return $this->sqlite->res2arr($res);
     }
 
     public function renderPoll($poll, $type) {
@@ -178,7 +173,7 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
             $percent = (float)($response['per'] * 100 / ($max ? $max : 1));
 
             $html .= '<div class="progress">';
-            $html .= '<div class="progress-bar bg-' . $type . '" role="progressbar" style="width: ' . $percent . '% " aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">' . number_format($percent, 2, ',', '') . '%</div>';
+            $html .= '<div class="progress-bar" role="progressbar" style="width: ' . $percent . '% " aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">' . number_format($percent, 2, ',', '') . '%</div>';
             $html .= '</div>';
             $html .= '</p>';
         }
@@ -189,13 +184,11 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
     private function getPollDuration($poll) {
         $dateFrom = date($this->getLang('date_format'), strtotime($poll['valid_from']));
         $dateTo = date($this->getLang('date_format'), strtotime($poll['valid_to']));
-        $date = $dateFrom . ' - ' . $dateTo;
-        return '<small class="card-subtitle text-muted">' . $date . '</small>';
+        return '<small class="card-subtitle text-muted">' . $dateFrom . ' - ' . $dateTo . '</small>';
     }
 
     private function getPollHeadline($poll, $type) {
-        return '<div class="card-header card-inverse card-' . $type . '">' . htmlspecialchars($poll['question']) . '
-                </div>';
+        return '<div class="card-header card-inverse">' . htmlspecialchars($poll['question']) . '</div>';
     }
 
     private function getOpenPollHtml($poll, $type) {
@@ -246,8 +239,9 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
         foreach ($poll['answers'] as $answer) {
             $form->addTagOpen('div')
                 ->addClass('form-check');
-            $form->addRadioButton('answer[id][]', $answer['answer'])
-                ->attr('value', $answer['answer_id']);
+            $radio = new \fks\Form\CheckableElement('radio', 'answer[id][]', $answer['answer']);
+            $radio->val($answer['answer_id']);
+            $form->addElement($radio);
             $form->addTagClose('div');
         }
     }
@@ -256,8 +250,9 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
         foreach ($poll['answers'] as $answer) {
             $form->addTagOpen('div')
                 ->addClass('form-check');
-            $form->addCheckbox('answer[id][]', $answer['answer'])
-                ->attr('value', $answer['answer_id']);
+            $checkbox = new \fks\Form\CheckableElement('checkbox', 'answer[id][]', $answer['answer']);
+            $checkbox->val($answer['answer_id']);
+            $form->addElement($checkbox);;
             $form->addTagClose('div');
         }
     }
