@@ -42,17 +42,17 @@ class action_plugin_fkspoll_response extends DokuWiki_Action_Plugin {
             }
             if (isset($answers['id'])) {
                 foreach ($answers['id'] as $id) {
-                    $this->helper->saveResponse($question_id, $id);
+                    $this->saveResponse($question_id, $id);
                 }
             }
             if (isset($answers['text'])) {
                 foreach ($answers['text'] as $text) {
                     $text = trim($text);
-                    if ($text == "") {
+                    if ($text == '') {
                         continue;
                     }
                     $id = $this->helper->createAnswer($question_id, $text);
-                    $this->helper->saveResponse($question_id, $id);
+                    $this->saveResponse($question_id, $id);
                 }
             }
             setcookie('poll-' . $question_id, 1, time() + 60 * 60 * 24 * 100);
@@ -64,6 +64,24 @@ class action_plugin_fkspoll_response extends DokuWiki_Action_Plugin {
             msg($this->getLang('already_voted'), -1);
             return;
         }
+    }
+
+    private function saveResponse($question_id, $id) {
+        $this->helper->sqlite->query('INSERT INTO ' . helper_plugin_fkspoll::db_table_response . ' 
+            (question_id,answer_id,users_id,remote_addr,remote_host,user_agent,accept,accept_language,referer,`from`,cookie,inserted) 
+            VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',
+            $question_id,
+            $id,
+            @$_SESSION['id'],
+            @$_SERVER['REMOTE_ADDR'],
+            @$_SERVER['REMOTE_HOST'],
+            @$_SERVER['HTTP_USER_AGENT'],
+            @$_SERVER['HTTP_ACCEPT'],
+            @$_SERVER['HTTP_ACCEPT_LANGUAGE'],
+            @$_SERVER['HTTP_REFERER'],
+            $_SERVER['HTTP_FROM'],
+            serialize($_COOKIE),
+            \time());
     }
 
 }

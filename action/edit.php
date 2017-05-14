@@ -54,26 +54,19 @@ class action_plugin_fkspoll_edit extends DokuWiki_Action_Plugin {
         $this->addOthersParamsFields($form, $poll, $questionID);
         $this->addAnswersFields($form, $poll, $questionID);
 
-        $form->addButton('submit', $lang['btn_save'])
-            ->attr('type', 'submit')
-            ->addClass('btn btn-success');
+        $form->addButton('submit', $lang['btn_save'])->attr('type', 'submit')->addClass('btn btn-success');
         return $form->toHTML();
     }
 
     private function addOthersParamsFields(Form &$form, $poll, $questionID) {
-        $form->addFieldsetOpen($this->getLang('poll_param'))
-            ->attr('class', 'params');
-        $form->addTagOpen('div')
-            ->addClass('form-check');
-        $single = $form->addRadioButton('answer-type', $this->getLang('single'))
-            ->val('single')
+        $form->addFieldsetOpen($this->getLang('poll_param'))->attr('class', 'params');
+        $form->addTagOpen('div')->addClass('form-check');
+        $single = $form->addRadioButton('answer-type', $this->getLang('single'))->val('single')
             ->attrs(['required' => 'required']);
         $form->addTagClose('div');
 
-        $form->addTagOpen('div')
-            ->addClass('form-check');
-        $multiple = $form->addRadioButton('answer-type', $this->getLang('multiple'))
-            ->val('multiple')
+        $form->addTagOpen('div')->addClass('form-check');
+        $multiple = $form->addRadioButton('answer-type', $this->getLang('multiple'))->val('multiple')
             ->attrs(['required' => 'required']);
         $form->addTagClose('div');
 
@@ -88,46 +81,34 @@ class action_plugin_fkspoll_edit extends DokuWiki_Action_Plugin {
     }
 
     private function addAnswersFields(Form &$form, $poll, $questionID) {
-        $form->addFieldsetOpen($this->getLang('answers'))
-            ->attr('class', 'answers');
+        $form->addFieldsetOpen($this->getLang('answers'))->attr('class', 'answers');
         if ($questionID) {
             foreach ($poll['answers'] as $answer) {
-                $form->addTagOpen('div')
-                    ->addClass('form-group');
-                $form->addTextInput('answers[' . $answer['answer_id'] . ']', null)
-                    ->addClass('form-control')
-                    ->attrs(['placeholder' => $this->getLang('answer')])
-                    ->val($answer['answer']);
+                $form->addTagOpen('div')->addClass('form-group');
+                $form->addTextInput('answers[' . $answer['answer_id'] . ']', null)->addClass('form-control')
+                    ->attrs(['placeholder' => $this->getLang('answer')])->val($answer['answer']);
                 $form->addTagClose('div');
             }
         }
 
-        $form->addTagOpen('div')
-            ->addClass('form-group new-answer');
-        $form->addTextInput('new_answers[]', null)
-            ->addClass('form-control')
+        $form->addTagOpen('div')->addClass('form-group new-answer');
+        $form->addTextInput('new_answers[]', null)->addClass('form-control')
             ->attrs(['placeholder' => $this->getLang('answer')]);
         $form->addTagClose('div');
 
-        $form->addButton('button', $this->getLang('add_answer'))
-            ->attr('id', 'add-answer')
-            ->addClass('btn btn-primary')
+        $form->addButton('button', $this->getLang('add_answer'))->attr('id', 'add-answer')->addClass('btn btn-primary')
             ->attr('type', 'button');
         $form->addFieldsetClose();
     }
 
     private function addQuestionFields(Form &$form, $poll, $questionID) {
-        $form->addFieldsetOpen($this->getLang('question'))
-            ->attr('class', 'question');
-        $form->addTagOpen('div')
-            ->addClass('form-group');
-        $question = $form->addTextInput('question')
-            ->attrs([
+        $form->addFieldsetOpen($this->getLang('question'))->attr('class', 'question');
+        $form->addTagOpen('div')->addClass('form-group');
+        $question = $form->addTextInput('question')->attrs([
                 'placeholder' => $this->getLang('question'),
                 'required' => 'required',
                 'pattern' => "\S.*"
-            ])
-            ->addClass('form-control');
+            ])->addClass('form-control');
         $form->addTagClose('div');
         $form->addFieldsetClose();
         if ($questionID) {
@@ -136,21 +117,18 @@ class action_plugin_fkspoll_edit extends DokuWiki_Action_Plugin {
     }
 
     private function addValidFields(Form &$form, $poll) {
-        $form->addFieldsetOpen($this->getLang('choose_date-week'))
-            ->attr('class', 'validity');
-        $form->addTagOpen('div')
-            ->addClass('form-group');
+        $form->addFieldsetOpen($this->getLang('choose_date-week'))->attr('class', 'validity');
+        $form->addTagOpen('div')->addClass('form-group');
 
         $validFromElement = new dokuwiki\Form\InputElement('datetime-local', 'valid-from', null);
-        $validFromElement->addClass('form-control')
-            ->val($poll['question_id'] ? date('Y-m-d\TH:i:s', strtotime($poll['valid_from'])) : date('Y-m-d\TH:i:s', time()));
+        $validFromElement->addClass('form-control')->val($poll['question_id'] ? date('Y-m-d\TH:i:s',
+                strtotime($poll['valid_from'])) : date('Y-m-d\TH:i:s', time()));
         $form->addElement($validFromElement);
         $form->addTagClose('div');
-        $form->addTagOpen('div')
-            ->addClass('form-group');
+        $form->addTagOpen('div')->addClass('form-group');
         $validToElement = new dokuwiki\Form\InputElement('datetime-local', 'valid-to', null);
-        $validToElement->addClass('form-control')
-            ->val($poll['question_id'] ? date('Y-m-d\TH:i:s', strtotime($poll['valid_to'])) : date('Y-m-d\TH:i:s', time()));
+        $validToElement->addClass('form-control')->val($poll['question_id'] ? date('Y-m-d\TH:i:s',
+                strtotime($poll['valid_to'])) : date('Y-m-d\TH:i:s', time()));
         $form->addElement($validToElement);
         $form->addTagClose('div');
         $form->addFieldsetClose();
@@ -191,13 +169,13 @@ class action_plugin_fkspoll_edit extends DokuWiki_Action_Plugin {
             $sectok = md5($data['question'] . serialize($data));
             $data['sectok'] = $sectok;
             if ($data['question_id']) {
-                $this->helper->editQuestion($data);
-                $this->helper->editAnswers($data['question_id'], $data['answers']);
+                $this->editQuestion($data);
+                $this->editAnswers($data['answers']);
                 $this->helper->createAnswers($data['question_id'], $data['new_answers']);
                 msg('edited');
             } else {
-                if ($this->helper->isNewQuestion($sectok)) {
-                    $id = $this->helper->createQuestion($data);
+                if ($this->isNewQuestion($sectok)) {
+                    $id = $this->createQuestion($data);
                     $this->helper->createAnswers($id, $data['new_answers']);
                     msg('added');
                 } else {
@@ -236,5 +214,63 @@ class action_plugin_fkspoll_edit extends DokuWiki_Action_Plugin {
             }
         }
         return true;
+    }
+
+    public function editAnswers($answers) {
+        foreach ($answers as $id => $answer) {
+            $this->editAnswer($id, $answer);
+        }
+    }
+
+    private function editAnswer($id, $answer) {
+        if (trim($answer)) {
+            $this->helper->sqlite->query('UPDATE ' . helper_plugin_fkspoll::db_table_answer . ' 
+                    SET answer=?
+                    WHERE answer_id=? ',
+                $answer,
+                $id);
+        } else {
+            $this->helper->sqlite->query('DELETE FROM ' . helper_plugin_fkspoll::db_table_answer . '
+WHERE answer_id=? ',
+                $id);
+        }
+    }
+
+    private function isNewQuestion($sectok) {
+        $res = $this->helper->sqlite->query('SELECT * FROM ' . helper_plugin_fkspoll::db_table_question .
+            ' WHERE sectok=? ',
+            $sectok);
+        $ar = $this->helper->sqlite->res2arr($res);
+        return (empty($ar) ? 1 : 0);
+    }
+
+    private function createQuestion($p) {
+        $this->helper->sqlite->query('INSERT INTO ' . helper_plugin_fkspoll::db_table_question . '
+                (question,lang,valid_from,valid_to,type,new_answer,sectok) 
+                VALUES(?,?,?,?,?,?,?)',
+            $p['question'],
+            $p['lang'],
+            $p['valid_from'],
+            $p['valid_to'],
+            $p['type'],
+            $p['new_answer'],
+            $p['sectok']);
+        $res = $this->helper->sqlite->query('SELECT max(question_id) FROM ' . helper_plugin_fkspoll::db_table_question);
+        return $this->helper->sqlite->res2single($res);
+    }
+
+    private function editQuestion($p) {
+        $this->helper->sqlite->query('UPDATE ' . helper_plugin_fkspoll::db_table_question . ' 
+                SET question=?,valid_from=?,valid_to=?,type=?,new_answer=?,sectok=?            
+                WHERE question_id = ?',
+            $p['question'],
+            $p['valid_from'],
+            $p['valid_to'],
+            $p['type'],
+            $p['new_answer'],
+            $p['sectok'],
+            $p['question_id']);
+        $res = $this->helper->sqlite->query('SELECT max(question_id) FROM ' . helper_plugin_fkspoll::db_table_question);
+        return $this->helper->sqlite->res2single($res);
     }
 }
