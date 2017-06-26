@@ -37,8 +37,8 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
     }
 
     public function createAnswer($question_id, $text) {
-        if (!$this->helper->answer2ID($question_id, $text)) {
-            $this->helper->sqlite->query('INSERT INTO ' . self::db_table_answer . ' 
+        if (!$this->answer2ID($question_id, $text)) {
+            $this->sqlite->query('INSERT INTO ' . self::db_table_answer . ' 
                     (question_id,answer) 
                     VALUES(?,?)', $question_id, $text);
         }
@@ -46,8 +46,8 @@ class helper_plugin_fkspoll extends DokuWiki_Plugin {
     }
 
     private function answer2ID($question_id, $text) {
-        $res = $this->helper->sqlite->query('SELECT answer_id FROM ' . self::db_table_answer . ' WHERE question_id=? AND answer=?', $question_id, $text);
-        return $this->helper->sqlite->res2single($res);
+        $res = $this->sqlite->query('SELECT answer_id FROM ' . self::db_table_answer . ' WHERE question_id=? AND answer=?', $question_id, $text);
+        return $this->sqlite->res2single($res);
     }
 
     // *********** get poll **************//

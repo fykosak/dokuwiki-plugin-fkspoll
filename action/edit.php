@@ -166,15 +166,15 @@ class action_plugin_fkspoll_edit extends DokuWiki_Action_Plugin {
         $data = [];
         if ($this->isValid($data)) {
 
-            $sectok = md5($data['question'] . serialize($data));
-            $data['sectok'] = $sectok;
+            $securityToken = md5($data['question'] . serialize($data));
+            $data['sectok'] = $securityToken;
             if ($data['question_id']) {
                 $this->editQuestion($data);
                 $this->editAnswers($data['answers']);
                 $this->helper->createAnswers($data['question_id'], $data['new_answers']);
                 msg('edited');
             } else {
-                if ($this->isNewQuestion($sectok)) {
+                if ($this->isNewQuestion($securityToken)) {
                     $id = $this->createQuestion($data);
                     $this->helper->createAnswers($id, $data['new_answers']);
                     msg('added');

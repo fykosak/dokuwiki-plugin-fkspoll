@@ -33,7 +33,7 @@ class syntax_plugin_fkspoll extends DokuWiki_Syntax_Plugin {
         $this->Lexer->addSpecialPattern('~~FKSPOLL-?[a-zA-Z-]*?~~', $mode, 'plugin_fkspoll');
     }
 
-    public function handle($match, $state) {
+    public function handle($match, $state, $pos, Doku_Handler $handler) {
         global $conf;
         $matches = [];
         $lang = $conf['lang'];
@@ -44,7 +44,7 @@ class syntax_plugin_fkspoll extends DokuWiki_Syntax_Plugin {
         return array($state, ['lang' => $lang, 'type' => strtolower($type)]);
     }
 
-    public function render($mode, Doku_Renderer &$renderer, $data) {
+    public function render($mode, Doku_Renderer $renderer, $data) {
         list($state, $param) = $data;
         if ($mode == 'xhtml') {
             switch ($state) {
@@ -66,7 +66,6 @@ class syntax_plugin_fkspoll extends DokuWiki_Syntax_Plugin {
     }
 
     private function renderArchive(Doku_Renderer &$renderer, $param) {
-
 
         $renderer->nocache();
         $polls = $this->allPolls($param['lang'] ?: 'cs');
@@ -106,7 +105,7 @@ class syntax_plugin_fkspoll extends DokuWiki_Syntax_Plugin {
                         'do' => helper_plugin_fkspoll::TARGET,
                         'poll[do]' => 'edit',
                         'question_id' => $poll['question_id']
-                    ]) . '">' . $this->getLang('edit_poll') . '
+                    ], true) . '">' . $this->getLang('edit_poll') . '
                 </a>
                 </div>';
 
@@ -114,7 +113,7 @@ class syntax_plugin_fkspoll extends DokuWiki_Syntax_Plugin {
                     [
                         'do' => helper_plugin_fkspoll::TARGET,
                         'poll[do]' => 'edit',
-                    ]) . '">' . $this->getLang('create_poll') . '</a></div>';
+                    ], true) . '">' . $this->getLang('create_poll') . '</a></div>';
         }
         $renderer->doc .= '</div>';
     }
@@ -132,19 +131,19 @@ class syntax_plugin_fkspoll extends DokuWiki_Syntax_Plugin {
             FROM ' . helper_plugin_fkspoll::db_table_answer . '            
             WHERE question_id = ?',
             $poll['question_id']);
-        $ans = $this->helper->sqlite->res2arr($res);
+        $answers = $this->helper->sqlite->res2arr($res);
         $response = [];
         $sum = 0;
-        foreach ($ans as $an) {
+        foreach ($answers as $answer) {
             $res = $this->helper->sqlite->query('SELECT COUNT(*) AS count
             FROM ' . helper_plugin_fkspoll::db_table_response . '        
             WHERE answer_id=? AND question_id=?
             GROUP BY answer_id',
-                $an['answer_id'],
+                $answer['answer_id'],
                 $poll['question_id']);
             $c = $this->helper->sqlite->res2single($res);
             $sum += $c;
-            $response[] = ['count' => $c, 'answer' => $an['answer']];
+            $response[] = ['count' => $c, 'answer' => $answer['answer']];
         }
         $r = [];
         foreach ($response as $k => $answer) {
@@ -206,7 +205,7 @@ class syntax_plugin_fkspoll extends DokuWiki_Syntax_Plugin {
 
         $html .= $this->getPollHeadline($poll);
         $html .= '<div class="card-block">';
-        $form = new Form(['action'=>'.']);
+        $form = new Form(['action' => '.']);
         $form->setHiddenField('target', helper_plugin_fkspoll::TARGET);
         $form->setHiddenField('poll[do]', 'vote');
         $form->setHiddenField('poll[question-id]', $poll['question_id']);
