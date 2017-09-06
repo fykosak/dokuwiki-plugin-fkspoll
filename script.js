@@ -1,18 +1,17 @@
-"use strict";
-
-jQuery(function () {
-    var $ = jQuery;
-    $('.poll').each(function () {
-        const $poll = $(this);
-        $poll.find('input[type="text"]').on('input', function () {
-            if ($(this).val() == '') {
-                $poll.find('input[type="radio"]')
-                    .prop('disabled', false);
+jQuery(() => {
+    "use strict";
+    document.querySelectorAll('.poll').forEach((poll) => {
+        poll.querySelector('input[type="text"]').addEventListener('input', (event) => {
+            if (!event.target.value) {
+                poll.querySelectorAll('input[type="radio"]').forEach((input) => {
+                    input.disabled = false;
+                });
             } else {
-                $poll.find('input[type="radio"]')
-                    .prop('disabled', true)
-                    .prop('checked', false);
+                poll.querySelectorAll('input[type="radio"]').forEach((input) => {
+                    input.disabled = true;
+                    input.checked = false;
+                });
             }
-        })
+        });
     });
 });
